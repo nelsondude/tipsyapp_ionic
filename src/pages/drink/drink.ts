@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController, NavParams, ToastController} from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
 
 /**
  * Generated class for the DrinkPage page.
@@ -14,27 +14,22 @@ import {NavController, NavParams, ToastController} from 'ionic-angular';
 })
 export class DrinkPage implements OnInit {
   drink: any;
-  saved: false;
 
   constructor(public navCtrl: NavController,
-              public navParams: NavParams,
-              public toastCtrl: ToastController) {
+              public navParams: NavParams,) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad DrinkPage');
   }
+
   ngOnInit() {
     this.drink = this.navParams.get('drink');
   }
-  toggleSaveDrink() {
-    const toast = this.toastCtrl.create({
-      message: 'Saved Drink to Bar!',
-      duration: 2000
-    });
-    toast.present();
+  onSaveDrink(){
+
   }
-  toggleShowDescription() {
+  onShowDescription() {
 
   }
 

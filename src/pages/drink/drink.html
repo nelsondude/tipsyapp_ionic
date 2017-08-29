@@ -14,32 +14,29 @@
 
 
 <ion-content padding>
+  <div class="video-container">
+    <iframe [src]="drink.embed_url | safe: 'resourceUrl'"  frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <ion-item-group *ngFor="let layer of drink.layers">
+    <ion-item-divider color="light">Layer: {{layer.name}}</ion-item-divider>
+    <ion-item *ngFor="let ingredient of layer.ingredients">
+      {{ingredient.name}}
+      <ion-badge *ngIf="ingredient.need_it" item-end color="danger">Missing</ion-badge>
+    </ion-item>
+  </ion-item-group>
+
   <ion-grid>
     <ion-row>
       <ion-col>
-        <iframe [src]="drink.embed_url | safe: 'resourceUrl'"  style="width: 100%; height: auto;" allowfullscreen></iframe>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-item-group *ngFor="let layer of drink.layers">
-          <ion-item-divider color="light">Layer: {{layer.name}}</ion-item-divider>
-          <ion-item *ngFor="let ingredient of layer.ingredients">
-            <h5>{{ingredient.amount}} {{ingredient.name}}</h5>
-            <ion-badge item-end *ngIf="ingredient.need_it" color="danger">Missing</ion-badge>
-          </ion-item>
-        </ion-item-group>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <button ion-button block outline color="primary" *ngIf="!saved" (click)="toggleSaveDrink()">Save</button>
+        <button ion-button outline block color="secondary" (click)="onSaveDrink()">Save</button>
       </ion-col>
       <ion-col>
-        <button ion-button block outline color="secondary" (click)="toggleDescription">View Description</button>
+        <button ion-button outline block color="dark" (click)="onShowDescription()">Show Description</button>
       </ion-col>
     </ion-row>
   </ion-grid>
+
 
 
 </ion-content>

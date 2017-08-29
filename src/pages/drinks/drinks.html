@@ -11,25 +11,46 @@
         <ion-icon name="menu"></ion-icon>
       </button>
     </ion-buttons>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="onShowPopover($event)">
+        <ion-icon name="more"></ion-icon>
+      </button>
+    </ion-buttons>
     <ion-title>Tipsy App Drinks</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
+  <ion-searchbar debounce="400" [(ngModel)]="queryParam" (ionInput)="updateDrinks()"></ion-searchbar>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <button ion-button block *ngIf="!auth.isAuthenticated()" (click)="auth.login()">Log In</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
   <ion-list>
-    <ion-item *ngFor="let drink of drinks" (click)="loadDrink(drink)">
-      <ion-card text-center>
-        <img [src]="drink.thumbnail" alt="">
-        <ion-card-header>
-          {{drink.name}}
-        </ion-card-header>
-        <ion-card-content>
-          You have {{drink.count_have}} out of {{drink.count_total}} ingredients !!!
-        </ion-card-content>
-      </ion-card>
-    </ion-item>
+    <div *ngFor="let page of getListOfPages()">
+      <ion-item *ngFor="let drink of page.results" (click)="loadDrink(drink)">
+        <ion-card text-center>
+          <img [src]="drink.thumbnail" alt="">
+          <ion-card-header>
+            {{drink.name}}
+          </ion-card-header>
+          <ion-card-content>
+            You have {{drink.count_have}} out of {{drink.count_total}} ingredients !!!
+          </ion-card-content>
+        </ion-card>
+      </ion-item>
+    </div>
+
   </ion-list>
+
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)" threshold="1000px">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 
 </ion-content>

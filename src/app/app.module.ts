@@ -10,12 +10,15 @@ import {DrinksPage} from '../pages/drinks/drinks';
 import {DrinkPage} from "../pages/drink/drink";
 import {HttpModule} from '@angular/http';
 import {SafePipe} from '../pipes/safe.pipe';
+import {PopoverPage} from '../pages/popover/popover';
+import { AuthProvider } from '../providers/auth/auth';
 
 @NgModule({
   declarations: [
     MyApp,
     DrinksPage,
     DrinkPage,
+    PopoverPage,
     SafePipe
   ],
   imports: [
@@ -27,13 +30,15 @@ import {SafePipe} from '../pipes/safe.pipe';
   entryComponents: [
     MyApp,
     DrinksPage,
-    DrinkPage
+    DrinkPage,
+    PopoverPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    DrinksProvider
+    DrinksProvider,
+    AuthProvider
   ]
 })
 export class AppModule {}
