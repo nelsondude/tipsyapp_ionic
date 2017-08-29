@@ -2,5 +2,7 @@
   "name": "tipsy_ionic",
   "app_id": "bb284db8",
   "type": "ionic-angular",
-  "integrations": {}
+  "integrations": {
+    "cordova": {}
+  }
 }
