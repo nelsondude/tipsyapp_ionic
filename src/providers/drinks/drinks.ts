@@ -16,7 +16,8 @@ export class DrinksProvider {
   private playlists: any = [];
   private filters: any = [];
 
-  url = 'http://127.0.0.1:8000/api/drink/';
+  // url = 'http://127.0.0.1:8000/api/drink/';
+  url = 'http://tipsyapp1.herokuapp.com/api/drink/';
 
   constructor(public http: Http) {
     console.log('Hello DrinksProvider Provider');
