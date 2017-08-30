@@ -7,9 +7,11 @@
 
   <ion-content>
     <ion-list>
-      <button ion-item (click)="onLoad(rootPage)" *ngIf="isAuthenticated">
-        <ion-icon name="book"></ion-icon>
-        Recipe Book
+      <button color="primary" ion-item (click)="auth.login()" *ngIf="!auth.isAuthenticated()">
+        Login
+      </button>
+      <button color="danger" ion-item (click)="auth.logout()" *ngIf="auth.isAuthenticated()">
+        Logout
       </button>
     </ion-list>
   </ion-content>

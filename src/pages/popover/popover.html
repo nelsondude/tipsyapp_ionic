@@ -1,1 +1,21 @@
 
+<ion-list radio-group [(ngModel)]="relationship">
+  <ion-list-header>
+    Ordering
+  </ion-list-header>
+
+  <ion-item *ngFor="let option of options; let i = index">
+    <ion-label>{{option.name}}</ion-label>
+    <ion-radio [checked]="i == index" (ionSelect)="showData(i)" [value]="option.option"></ion-radio>
+  </ion-item>
+
+</ion-list>
+
+<ion-list>
+  <ion-item>
+    <ion-label>Drink Filters</ion-label>
+    <ion-select [(ngModel)]="filters" multiple="true">
+      <ion-option *ngFor="let playlist of getPlaylists()">{{playlist.name}}</ion-option>
+    </ion-select>
+  </ion-item>
+</ion-list>

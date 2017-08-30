@@ -18,7 +18,14 @@ import {AuthProvider} from '../../providers/auth/auth';
   templateUrl: 'drinks.html',
 })
 export class DrinksPage implements OnInit {
-  queryParam = '';
+  options = [
+    {name: 'Most Recent', option: 'timestamp'},
+    {name: 'Items You Have', option: 'count_have'},
+    {name: 'Items You Need', option: 'count_need'}
+  ];
+  query = '';
+  index = 0;
+  filters = [];
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
@@ -36,11 +43,15 @@ export class DrinksPage implements OnInit {
   }
 
   updateDrinks() {
-    this.drinksProvider.getFirstPage()
+    const loading = this.loadingCtrl.create({
+      content: 'Loading Drinks ...'
+    });
+    loading.present();
+    this.drinksProvider.fetchFirstPage(this.query, this.options[this.index].option)
       .subscribe(
         (data) => console.log('Got the Drinks!'),
         (error) => console.log(error),
-        () => console.log('Request Completed')
+        () => loading.dismiss()
       );
   }
 
@@ -49,7 +60,7 @@ export class DrinksPage implements OnInit {
       content: 'Loading ...'
     });
     loading.present();
-    this.drinksProvider.getDetailDrink(drink.url)
+    this.drinksProvider.fetchDetailDrink(drink.url)
       .subscribe(
         (drinkDetail) => this.navCtrl.push(DrinkPage, {drink: drinkDetail}),
         (error) => console.log(error),
@@ -57,12 +68,20 @@ export class DrinksPage implements OnInit {
       );
   }
   onShowPopover(event: any) {
-    let popover = this.popoverCtrl.create(PopoverPage);
+    let popover = this.popoverCtrl.create(PopoverPage, {index: this.index, options: this.options});
     popover.present({ev: event});
+    popover.onDidDismiss(data => {
+      if (data) {
+        this.index = data.index;
+        this.drinksProvider.setSelectedPlaylists(data.filters);
+      }
+      this.updateDrinks();
+    });
   }
+
   doInfinite(infiniteScroll) {
     console.log(infiniteScroll);
-    this.drinksProvider.addMorePages()
+    this.drinksProvider.fetchMorePages()
       .subscribe(
         (data) => console.log('Got the Drinks!'),
         (error) => console.log(error),
@@ -70,7 +89,7 @@ export class DrinksPage implements OnInit {
       );
   }
   getListOfPages() {
-    return this.drinksProvider.getPagesCopy();
+    return this.drinksProvider.getPages();
   }
 
 }

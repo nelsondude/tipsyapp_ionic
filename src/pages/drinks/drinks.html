@@ -23,14 +23,7 @@
 
 
 <ion-content>
-  <ion-searchbar debounce="400" [(ngModel)]="queryParam" (ionInput)="updateDrinks()"></ion-searchbar>
-  <ion-grid>
-    <ion-row>
-      <ion-col>
-        <button ion-button block *ngIf="!auth.isAuthenticated()" (click)="auth.login()">Log In</button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <ion-searchbar debounce="400" [(ngModel)]="query" (ionInput)="updateDrinks()"></ion-searchbar>
 
   <ion-list>
     <div *ngFor="let page of getListOfPages()">
@@ -46,10 +39,9 @@
         </ion-card>
       </ion-item>
     </div>
-
   </ion-list>
 
-  <ion-infinite-scroll (ionInfinite)="doInfinite($event)" threshold="1000px">
+  <ion-infinite-scroll *ngIf="drinksProvider.hasMorePages()" (ionInfinite)="doInfinite($event)" threshold="1000px">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
 
