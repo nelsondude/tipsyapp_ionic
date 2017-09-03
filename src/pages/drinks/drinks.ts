@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {LoadingController, NavController, NavParams, PopoverController} from 'ionic-angular';
-import {DrinkList} from '../../models/drinklist';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {AlertController, Content, LoadingController, NavController, NavParams, PopoverController} from 'ionic-angular';
 import {DrinksProvider} from '../../providers/drinks/drinks';
 import {DrinkPage} from '../drink/drink';
 import {PopoverPage} from '../popover/popover';
 import {AuthProvider} from '../../providers/auth/auth';
+import {PlaylistsProvider} from '../../providers/playlists/playlists';
+import {HeaderScroller} from '../../directives/header-scroller';
 
 /**
  * Generated class for the DrinksPage page.
@@ -21,25 +22,33 @@ export class DrinksPage implements OnInit {
   options = [
     {name: 'Most Recent', option: 'timestamp'},
     {name: 'Items You Have', option: 'count_have'},
-    {name: 'Items You Need', option: 'count_need'}
+    {name: 'Items You Need', option: 'count_need'},
+    {name: 'Percent You Have', option: 'percent'}
   ];
   query = '';
   index = 0;
   filters = [];
+  @ViewChild(Content) content: Content;
 
   constructor(public navCtrl: NavController,
-              public navParams: NavParams,
               public drinksProvider: DrinksProvider,
+              public plProvider: PlaylistsProvider,
               public loadingCtrl: LoadingController,
               public popoverCtrl: PopoverController,
-              public auth: AuthProvider) {
-  }
+              public alertCtrl: AlertController,
+              public auth: AuthProvider) {}
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad DrinksPage');
-  }
   ngOnInit() {
     this.updateDrinks();
+  }
+
+  showAlert() {
+    let alert = this.alertCtrl.create({
+      title: 'Error',
+      subTitle: 'Here is an Error...',
+      buttons: ['OK']
+    });
+    alert.present();
   }
 
   updateDrinks() {
@@ -50,7 +59,11 @@ export class DrinksPage implements OnInit {
     this.drinksProvider.fetchFirstPage(this.query, this.options[this.index].option)
       .subscribe(
         (data) => console.log('Got the Drinks!'),
-        (error) => console.log(error),
+        (error) => {
+          loading.dismiss();
+          console.log(error);
+          this.showAlert();
+        },
         () => loading.dismiss()
       );
   }
@@ -63,7 +76,10 @@ export class DrinksPage implements OnInit {
     this.drinksProvider.fetchDetailDrink(drink.url)
       .subscribe(
         (drinkDetail) => this.navCtrl.push(DrinkPage, {drink: drinkDetail}),
-        (error) => console.log(error),
+        (error) => {
+          console.log(error);
+          loading.dismiss();
+        },
         () => loading.dismiss()
       );
   }
@@ -73,7 +89,7 @@ export class DrinksPage implements OnInit {
     popover.onDidDismiss(data => {
       if (data) {
         this.index = data.index;
-        this.drinksProvider.setSelectedPlaylists(data.filters);
+        this.plProvider.setSelectedPlaylists(data.filters);
       }
       this.updateDrinks();
     });

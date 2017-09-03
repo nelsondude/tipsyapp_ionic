@@ -38,7 +38,17 @@ $colors: (
   secondary:  #32db64,
   danger:     #f53d3d,
   light:      #f4f4f4,
-  dark:       #222
+  dark:       #222,
+
+//  Google Material Palette
+  primary-color-dark:   #1976D2,
+  primary-color:        #2196F3,
+  primary-color-light:  #BBDEFB,
+  primary-color-text:   #FFFFFF,
+  accent-color:         #FF9800,
+  primary-text-color:   #212121,
+  secondary-text-color: #757575,
+  divider-color:        #BDBDBD
 );
 
 
@@ -86,3 +96,11 @@ $colors: (
 
 @import "roboto";
 @import "noto-sans";
+
+
+// User Overrides
+
+$toolbar-background: map-get($colors, primary-color-dark);
+
+$item-divider-color: map_get($colors, accent-color);
+$item-divider-bg: map_get($colors, accent-color);

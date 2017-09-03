@@ -7,6 +7,11 @@
 <ion-header>
 
   <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
     <ion-title>{{drink.name}}</ion-title>
   </ion-navbar>
 
@@ -22,17 +27,35 @@
     <ion-item-divider color="light">Layer: {{layer.name}}</ion-item-divider>
     <ion-item *ngFor="let ingredient of layer.ingredients">
       {{ingredient.name}}
-      <ion-badge *ngIf="ingredient.need_it" item-end color="danger">Missing</ion-badge>
+      <ion-badge *ngIf="ingredient.need_it" item-end color="accent-color">Missing</ion-badge>
+      <ion-badge *ngIf="!ingredient.need_it" item-end color="primary-color-dark">Have It!</ion-badge>
     </ion-item>
   </ion-item-group>
 
   <ion-grid>
     <ion-row>
       <ion-col>
-        <button ion-button outline block color="secondary" (click)="onSaveDrink()">Save</button>
+        <button *ngIf="!drink.have_it"
+                ion-button
+                block
+                color="primary-color-dark"
+                (click)="onSaveDrink('Saved ')">Save
+        </button>
+        <button *ngIf="drink.have_it"
+                ion-button
+                block
+                color="accent-color"
+                (click)="onSaveDrink('Removed ')">Remove
+        </button>
       </ion-col>
       <ion-col>
-        <button ion-button outline block color="dark" (click)="onShowDescription()">Show Description</button>
+        <button *ngIf="!description" ion-button outline block color="primary-color-dark" (click)="onShowDescription()">Show Description</button>
+        <button *ngIf="description" ion-button outline block color="accent-color" (click)="onShowDescription()">Hide Description</button>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="description">
+      <ion-col>
+        <p style="white-space: pre; text-align: left;">{{drink.webpage_url.description}}</p>
       </ion-col>
     </ion-row>
   </ion-grid>

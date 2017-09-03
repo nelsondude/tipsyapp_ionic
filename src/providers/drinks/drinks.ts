@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import {Http, RequestOptions, URLSearchParams, Headers} from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/Rx';
+import { Urls } from '../../globals/urls'
+import {PlaylistsProvider} from '../playlists/playlists';
+import { Storage } from '@ionic/storage';
+import {AuthProvider} from '../auth/auth';
 
 /*
   Generated class for the DrinksProvider provider.
@@ -11,37 +15,26 @@ import 'rxjs/Rx';
 */
 @Injectable()
 export class DrinksProvider {
-  // private drinks: any = [];
   private pages: any = [];
-  private playlists: any = [];
-  private filters: any = [];
+  private userDrinks: any = [];
 
-  // url = 'http://127.0.0.1:8000/api/drink/';
-  url = 'http://tipsyapp1.herokuapp.com/api/drink/';
-
-  constructor(public http: Http) {
-    console.log('Hello DrinksProvider Provider');
-  }
+  constructor(public http: Http,
+              public plProvider: PlaylistsProvider,
+              public auth: AuthProvider) {}
 
   fetchFirstPage(query: string, ordering: string) {
-    console.log('filters:', this.filters);
     const params: URLSearchParams = new URLSearchParams();
-    for (const filter of this.filters) params.append('filter', filter);
+    for (const filter of this.plProvider.getFilters()) params.append('filter', filter);
     params.append('ordering', ordering);
     params.append('q', query);
-    const headers = new Headers();
-    const token = localStorage.getItem('id_token');
-    if (token) {
-      headers.set('Authorization', 'JWT ' + token);
-    }
-
     const options = new RequestOptions(
-      {headers: headers, search: params}
+      {headers: this.auth.headers, search: params}
     );
-    return this.http.get(this.url, options)
+    return this.http.get(Urls.drinks, options)
       .map(res => res.json())
       .do((data) => this.pages = [data]);
   }
+
   fetchMorePages() {
     let url = '';
     if (this.hasMorePages()) {
@@ -56,43 +49,41 @@ export class DrinksProvider {
   getPages() {
     return this.pages.slice();
   }
-  fetchDetailDrink(drinkUrl) {
-    return this.http.get(drinkUrl)
+
+  fetchDetailDrink(drinkUrl, changeUser = false) {
+    const params: URLSearchParams = new URLSearchParams();
+    if (changeUser) params.set('changeUser', 'true');
+    console.log(this.auth.idToken);
+    console.log(changeUser);
+
+    const options = new RequestOptions(
+      {headers: this.auth.headers,
+        search: params}
+    );
+    return this.http.get(drinkUrl, options)
       .map(res => res.json());
   }
   hasMorePages() {
     const lastPage = this.pages[this.pages.length - 1];
     return lastPage && lastPage.next;
   }
-  fetchPlaylists() {
-    return this.http.get(this.url + 'playlists/')
-      .map(res => res.json())
-      .do((data) => {
-        this.playlists = data.results;
-        // this.playlists = [];
-        // for (const playlist of data.results) {
-        //   const dict = {'name': playlist.name, 'selected': false};
-        //   this.playlists.push(dict);
-        // }
-        console.log(this.playlists);
-      });
-  }
-  playlistsFetched() {
-    return this.playlists.length > 0;
-  }
-  getPlaylists() {
-    return this.playlists.slice();
-  }
-  togglePlaylistSelected(index: number) {
-    if (index < this.playlists.length - 1) {
-      this.playlists[index].selected = !this.playlists[index].selected;
-    }
+  removeDrinkNow(page: number, index: number) {
+    this.userDrinks[page].results.splice(index, 1);
   }
 
-  setSelectedPlaylists(playlists: string[]){
-    this.filters = playlists.slice();
+  fetchUserDrinks() {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('user', 'true');
+    const options = new RequestOptions(
+      {headers: this.auth.headers, search: params}
+    );
+    return this.http.get(Urls.drinks, options)
+      .map(res => res.json())
+      .do((data) => this.userDrinks = [data]);
   }
-  getSelectedPlaylists(){
-    return this.filters.slice();
+
+  getUserDrinks() {
+    return this.userDrinks.slice();
   }
+
 }

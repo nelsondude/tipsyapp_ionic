@@ -1,0 +1,54 @@
+<!--
+  Generated template for the UserDrinksPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>My Ingredients</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <ion-list>
+    <ion-list-header>My Ingredients</ion-list-header>
+    <div *ngFor="let page of getUserIngredients(); let pageIndex = index">
+      <ion-item-sliding *ngFor="let ingredient of page.results; let i = index">
+        <ion-item >
+          {{ingredient.name}}
+          <button ion-button round clear icon-only item-end (click)="removeIngredient(ingredient, pageIndex, i)">
+            <ion-icon name="close"></ion-icon>
+          </button>
+        </ion-item>
+        <ion-item-options side="right" (ionSwipe)="removeIngredient(ingredient, pageIndex, i)">
+          <button ion-button
+                  expandable
+                  color="danger"
+                  (click)="removeIngredient(ingredient, pageIndex, i)">
+            Delete
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </div>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header>Suggested Ingredients</ion-list-header>
+    <ion-item *ngFor="let suggested of getSuggestedIngredients(); let i = index">
+      <ion-label>
+        {{suggested.name}}
+      </ion-label>
+      <ion-checkbox (ionChange)="addIngredient(suggested)" color="dark" checked="false"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+</ion-content>

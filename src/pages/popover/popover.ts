@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController, NavParams, ViewController} from 'ionic-angular';
 import {DrinksProvider} from '../../providers/drinks/drinks';
+import {PlaylistsProvider} from '../../providers/playlists/playlists';
 
 /**
  * Generated class for the PopoverPage page.
@@ -21,18 +22,19 @@ export class PopoverPage implements OnInit{
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public viewCtrl: ViewController,
-              public drinksProvider: DrinksProvider) {
+              public drinksProvider: DrinksProvider,
+              public plProvider: PlaylistsProvider) {
   }
 
   ngOnInit() {
-    this.filters = this.drinksProvider.getSelectedPlaylists();
+    this.filters = this.plProvider.getSelectedPlaylists();
   }
 
   ionViewWillEnter() {
     this.index = this.navParams.get('index');
     this.options = this.navParams.get('options');
     if (this.getPlaylists().length == 0){
-      this.drinksProvider.fetchPlaylists()
+      this.plProvider.fetchPlaylists()
         .subscribe(
           (data) => console.log(data),
           (error) => console.log(error),
@@ -41,7 +43,7 @@ export class PopoverPage implements OnInit{
     }
   }
   ionViewWillLeave() {
-    this.drinksProvider.setSelectedPlaylists(this.filters);
+    this.plProvider.setSelectedPlaylists(this.filters);
   }
 
   ionViewDidLoad() {
@@ -53,6 +55,6 @@ export class PopoverPage implements OnInit{
   }
 
   getPlaylists() {
-    return this.drinksProvider.getPlaylists();
+    return this.plProvider.getPlaylists();
   }
 }

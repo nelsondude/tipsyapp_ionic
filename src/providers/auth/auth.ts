@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import {Headers} from '@angular/http'
 
 import Auth0Cordova from '@auth0/cordova';
 import Auth0 from 'auth0-js';
@@ -21,10 +21,12 @@ export class AuthProvider {
   accessToken: string;
   idToken: string;
   user: any;
+  headers: Headers = new Headers();
 
   constructor(public zone: NgZone) {
     this.user = this.getStorageVariable('profile');
     this.idToken = this.getStorageVariable('id_token');
+    if (this.idToken) this.setHeaders();
   }
 
   private getStorageVariable(name) {
@@ -38,6 +40,12 @@ export class AuthProvider {
   private setIdToken(token) {
     this.idToken = token;
     this.setStorageVariable('id_token', token);
+    this.setHeaders();
+  }
+
+  private setHeaders() {
+    this.headers.set('Authorization', 'JWT ' + this.idToken);
+    this.headers.set('Client-Code', 'mobile');
   }
 
   private setAccessToken(token) {
@@ -91,6 +99,7 @@ export class AuthProvider {
     this.idToken = null;
     this.accessToken = null;
     this.user = null;
+    this.headers = new Headers();
   }
 
 }

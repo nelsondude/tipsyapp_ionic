@@ -7,14 +7,25 @@
 
   <ion-content>
     <ion-list>
-      <button color="primary" ion-item (click)="auth.login()" *ngIf="!auth.isAuthenticated()">
-        Login
-      </button>
-      <button color="danger" ion-item (click)="auth.logout()" *ngIf="auth.isAuthenticated()">
-        Logout
-      </button>
+      <button outline block ion-item (click)="loadPage(tabsPage)">Tipsy App Home</button>
+      <button outline block ion-item (click)="auth.login()" *ngIf="!auth.isAuthenticated()">Login</button>
+      <button outline block ion-item (click)="auth.logout()" *ngIf="auth.isAuthenticated()">Logout</button>
+
+      <!--<button outline block ion-item (click)="loadPage(tabsPage)">Drinks</button>-->
     </ion-list>
   </ion-content>
+  <ion-footer>
+    <ion-toolbar>
+      <ion-title>Tipsy App &#169;</ion-title>
+
+    </ion-toolbar>
+  </ion-footer>
 </ion-menu>
 
-<ion-nav [root]="rootPage" #nav></ion-nav>
+<ion-nav [root]="tabsPage" #nav></ion-nav>
+
+<!--<ion-tabs>-->
+  <!--<ion-tab [root]="tab1Root"></ion-tab>-->
+  <!--<ion-tab [root]="tab2Root"></ion-tab>-->
+  <!--<ion-tab [root]="tab3Root"></ion-tab>-->
+<!--</ion-tabs>-->
