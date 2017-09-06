@@ -1,5 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {AlertController, Content, LoadingController, NavController, NavParams, PopoverController} from 'ionic-angular';
+import {
+  AlertController, Content, LoadingController, NavController, NavParams, PopoverController,
+  Refresher
+} from 'ionic-angular';
 import {DrinksProvider} from '../../providers/drinks/drinks';
 import {DrinkPage} from '../drink/drink';
 import {PopoverPage} from '../popover/popover';
@@ -30,6 +33,10 @@ export class DrinksPage implements OnInit {
   filters = [];
   @ViewChild(Content) content: Content;
 
+  loading = this.loadingCtrl.create({
+    content: 'Loading Drinks ...'
+  });
+
   constructor(public navCtrl: NavController,
               public drinksProvider: DrinksProvider,
               public plProvider: PlaylistsProvider,
@@ -39,7 +46,7 @@ export class DrinksPage implements OnInit {
               public auth: AuthProvider) {}
 
   ngOnInit() {
-    this.updateDrinks();
+    this.updateDrinksWithLoading();
   }
 
   showAlert() {
@@ -51,38 +58,34 @@ export class DrinksPage implements OnInit {
     alert.present();
   }
 
-  updateDrinks() {
-    const loading = this.loadingCtrl.create({
-      content: 'Loading Drinks ...'
-    });
-    loading.present();
-    this.drinksProvider.fetchFirstPage(this.query, this.options[this.index].option)
+  updateDrinksWithRefresher(refresher: any) {
+    this.drinksProvider.fetchFirstPage(
+      this.query, this.options[this.index].option)
       .subscribe(
         (data) => console.log('Got the Drinks!'),
-        (error) => {
-          loading.dismiss();
-          console.log(error);
-          this.showAlert();
-        },
-        () => loading.dismiss()
+        (error) => refresher.complete(),
+        () => refresher.complete()
+      );
+  }
+
+  updateDrinksWithLoading() {
+    this.drinksProvider.fetchFirstPage(
+      this.query, this.options[this.index].option)
+      .subscribe(
+        (data) => console.log('Got the Drinks!'),
+        (error) => this.showAlert(),
       );
   }
 
   loadDrink(drink: any) {
-    const loading = this.loadingCtrl.create({
-      content: 'Loading ...'
-    });
-    loading.present();
     this.drinksProvider.fetchDetailDrink(drink.url)
       .subscribe(
-        (drinkDetail) => this.navCtrl.push(DrinkPage, {drink: drinkDetail}),
-        (error) => {
-          console.log(error);
-          loading.dismiss();
-        },
-        () => loading.dismiss()
+        (drinkDetail) => {
+          this.navCtrl.push(DrinkPage, {drink: drinkDetail})
+        }
       );
   }
+
   onShowPopover(event: any) {
     let popover = this.popoverCtrl.create(PopoverPage, {index: this.index, options: this.options});
     popover.present({ev: event});
@@ -91,7 +94,7 @@ export class DrinksPage implements OnInit {
         this.index = data.index;
         this.plProvider.setSelectedPlaylists(data.filters);
       }
-      this.updateDrinks();
+      this.updateDrinksWithLoading();
     });
   }
 

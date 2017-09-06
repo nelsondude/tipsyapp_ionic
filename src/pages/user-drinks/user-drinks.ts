@@ -38,12 +38,15 @@ export class UserDrinksPage {
   getUserDrinks() {
     return this.drinksProvider.getUserDrinks();
   }
+
   doRefresh(refresher) {
-    setTimeout(()=>{
-      console.log('Finished Async Process');
-      refresher.complete();
-    }, 2000)
+    this.drinksProvider.fetchUserDrinks()
+      .subscribe(
+        (data) => refresher.complete(),
+        (error) => refresher.complete()
+      );
   }
+
   removeItem(drink: any, page: number, index: number) {
     this.drinksProvider.removeDrinkNow(page, index);
     this.drinksProvider.fetchDetailDrink(drink.url, true)

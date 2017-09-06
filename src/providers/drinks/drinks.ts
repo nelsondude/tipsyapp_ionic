@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {Http, RequestOptions, URLSearchParams, Headers} from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/Rx';
@@ -17,6 +17,7 @@ import {AuthProvider} from '../auth/auth';
 export class DrinksProvider {
   private pages: any = [];
   private userDrinks: any = [];
+  triggerDrinksUpdate: EventEmitter<boolean> = new EventEmitter();
 
   constructor(public http: Http,
               public plProvider: PlaylistsProvider,
